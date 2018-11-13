@@ -17,6 +17,7 @@ func newKstar(g *Graph, pg *pathGraph) kstar {
 	}
 }
 
+// Run returns the k shortest paths given a Graph implementation and k.
 func Run(g Graph, k int) (paths [][]*Edge) {
 	pg := newPathGraph()
 	ks := newKstar(&g, pg)

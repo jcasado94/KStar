@@ -14,14 +14,16 @@ func newPathGraphHeap() *pathGraphHeap {
 	}
 }
 
-func copyPathGraphHeap(pg *pathGraphHeap) *pathGraphHeap {
-	pq := make([]node, len(pg.pq))
-	copy(pq, pg.pq)
-	nodes := pg.nodes.copy()
-	return &pathGraphHeap{
-		pq:    pq,
-		nodes: nodes,
+func copyHt(src *pathGraphHeap, dst *pathGraphHeap) {
+	pq := make([]node, 0)
+	for _, htn := range src.pq {
+		pq = append(pq, htNode{
+			hinNode: htn.(htNode).hinNode,
+			ht:      dst,
+		})
 	}
+	nodes := src.nodes.copy()
+	dst.pq, dst.nodes = pq, nodes
 }
 
 func (h pathGraphHeap) Len() int { return len(h.pq) }

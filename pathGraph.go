@@ -73,7 +73,8 @@ func (pg *pathGraph) generateHt(n, s int, as *astar) {
 	} else {
 		parent := as.searchTreeParents[n]
 		htParent := pg.ht[parent.U]
-		pg.ht[n] = copyPathGraphHeap(htParent)
+		pg.ht[n] = new(pathGraphHeap)
+		copyHt(htParent, pg.ht[n])
 	}
 
 	ht := pg.ht[n]
