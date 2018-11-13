@@ -1,18 +1,21 @@
 package kstar
 
-import "container/heap"
+import (
+	"container/heap"
+)
 
 type dijkstra struct {
-	pq        []dijkstraNode
+	pq        []*dijkstraNode
 	formerTop *dijkstraNode
 }
 
 func newDijkstra(rn *rNode) (d *dijkstra) {
 	r := newDijkstraNode(rn, 0, []*dijkstraNode{}, false, true)
 	d = &dijkstra{
-		pq:        []dijkstraNode{r},
+		pq:        []*dijkstraNode{r},
 		formerTop: nil,
 	}
+	heap.Init(d)
 	return
 }
 
@@ -24,27 +27,30 @@ type dijkstraNode struct {
 	isR     bool
 }
 
-func newDijkstraNode(n node, cost float64, path []*dijkstraNode, isCross, isR bool) dijkstraNode {
+func newDijkstraNode(n node, cost float64, path []*dijkstraNode, isCross, isR bool) *dijkstraNode {
 	dn := dijkstraNode{
 		n:       n,
 		cost:    cost,
-		path:    path,
+		path:    make([]*dijkstraNode, len(path), cap(path)),
 		isCross: isCross,
 		isR:     isR,
 	}
+	for i, elem := range path {
+		dn.path[i] = elem
+	}
 	dn.path = append(dn.path, &dn)
-	return dn
+	return &dn
 }
 
 func (d *dijkstra) step() (path []*dijkstraNode, empty bool) {
 
 	path = make([]*dijkstraNode, 0)
-	current := heap.Pop(d).(dijkstraNode)
+	current := heap.Pop(d).(*dijkstraNode)
 
-	d.pushChildren(&current)
+	d.pushChildren(current)
 
 	if d.Empty() {
-		d.formerTop = &current
+		d.formerTop = current
 		return current.path, true
 	}
 
@@ -84,7 +90,7 @@ func (d dijkstra) Swap(i, j int) {
 }
 
 func (d *dijkstra) Push(x interface{}) {
-	d.pq = append(d.pq, x.(dijkstraNode))
+	d.pq = append(d.pq, x.(*dijkstraNode))
 }
 
 func (d *dijkstra) Pop() interface{} {

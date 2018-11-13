@@ -1,5 +1,7 @@
 package kstar
 
+import "container/heap"
+
 const undefinedPos = -1
 
 type pathGraphHeap struct {
@@ -8,10 +10,12 @@ type pathGraphHeap struct {
 }
 
 func newPathGraphHeap() *pathGraphHeap {
-	return &pathGraphHeap{
+	pgh := &pathGraphHeap{
 		pq:    make([]node, 0),
 		nodes: set{},
 	}
+	heap.Init(pgh)
+	return pgh
 }
 
 func copyHt(src *pathGraphHeap, dst *pathGraphHeap) {

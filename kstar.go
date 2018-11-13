@@ -27,7 +27,8 @@ func Run(g Graph, k int) (paths [][]*Edge) {
 		for len(paths) < k {
 			sigmaPath, empty := ks.d.step()
 			edgeSeq := buildSeq(sigmaPath)
-			paths = append(paths, buildPath(edgeSeq, ks.as.searchTreeParents, g.S(), g.T()))
+			path := buildPath(edgeSeq, ks.as.searchTreeParents, g.S(), g.T())
+			paths = append(paths, path)
 			if empty {
 				if ks.asExhausted {
 					break
