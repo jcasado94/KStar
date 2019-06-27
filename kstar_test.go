@@ -85,7 +85,7 @@ func TestAllKstarInstances(t *testing.T) {
 				for j, expectedEdge := range expectedPath.Edges {
 					edge := path[j]
 					if !expectedEdge.equals(*edge) {
-						t.Fatalf("Test %s failed! Path %d was\n%s\n, but expected\n%s", tg.tg.TestName, i, printPath(path), printPath(expectedPath.Edges))
+						t.Errorf("Test %s failed! Path %d was\n%s\n, but expected\n%s", tg.tg.TestName, i, printPath(path), printPath(expectedPath.Edges))
 					}
 				}
 			}
