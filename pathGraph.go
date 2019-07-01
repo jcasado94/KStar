@@ -87,7 +87,7 @@ func (pg *pathGraph) generateHt(n, s int, as *astar) {
 		})
 	}
 
-	for _, child := range as.searchTreeChildren[n] {
+	for child := range as.searchTreeChildren[n] {
 		pg.generateHt(child, s, as)
 	}
 }

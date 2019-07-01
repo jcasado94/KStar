@@ -12,7 +12,7 @@ type astar struct {
 	open               map[int]int // pq position, -1 if closed
 	gScore             map[int]float64
 	searchTreeParents  map[int]*Edge
-	searchTreeChildren map[int][]int
+	searchTreeChildren map[int]map[int]interface{}
 
 	c expansionConditionChecker
 }
@@ -26,7 +26,7 @@ func newAstar(g Graph) *astar {
 	as.open = make(map[int]int, 0)
 	as.gScore = make(map[int]float64, 0)
 	as.searchTreeParents = make(map[int]*Edge, 0)
-	as.searchTreeChildren = make(map[int][]int, 0)
+	as.searchTreeChildren = make(map[int]map[int]interface{}, 0)
 	arrivingEdges := make(map[int]int, 0)
 
 	initNode(g.S(), &as, arrivingEdges)
@@ -43,7 +43,7 @@ func initNode(n int, as *astar, arrivingEdges map[int]int) {
 	as.open[n] = -1
 	as.gScore[n] = 0
 	as.searchTreeParents[n] = nil
-	as.searchTreeChildren[n] = make([]int, 0)
+	as.searchTreeChildren[n] = make(map[int]interface{}, 0)
 	arrivingEdges[n] = 0
 }
 
@@ -89,8 +89,12 @@ func (as *astar) run() (newEdges []*Edge, empty bool) {
 			if neighbor == as.g.S() {
 				newEdges = appendIf(newEdges, &e, !reopening)
 			} else {
+				if hasParent {
+					oldParent := as.searchTreeParents[neighbor].U
+					delete(as.searchTreeChildren[oldParent], neighbor)
+				}
 				as.searchTreeParents[neighbor] = &e
-				as.searchTreeChildren[current] = append(as.searchTreeChildren[current], neighbor)
+				as.searchTreeChildren[current][neighbor] = true
 			}
 
 			as.gScore[neighbor] = tentativeScore
