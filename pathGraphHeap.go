@@ -5,13 +5,13 @@ import "container/heap"
 const undefinedPos = -1
 
 type pathGraphHeap struct {
-	pq    []node
+	pq    []pathGraphNode
 	nodes set
 }
 
 func newPathGraphHeap() *pathGraphHeap {
 	pgh := &pathGraphHeap{
-		pq:    make([]node, 0),
+		pq:    make([]pathGraphNode, 0),
 		nodes: set{},
 	}
 	heap.Init(pgh)
@@ -19,7 +19,7 @@ func newPathGraphHeap() *pathGraphHeap {
 }
 
 func copyHt(src *pathGraphHeap, dst *pathGraphHeap) {
-	pq := make([]node, 0)
+	pq := make([]pathGraphNode, 0)
 	for _, htn := range src.pq {
 		pq = append(pq, htNode{
 			hinNode: htn.(htNode).hinNode,
@@ -47,7 +47,7 @@ func (h pathGraphHeap) Swap(i, j int) {
 }
 
 func (h *pathGraphHeap) Push(x interface{}) {
-	n := x.(node)
+	n := x.(pathGraphNode)
 	pos := h.Len()
 	h.pq = append(h.pq, n)
 
@@ -80,7 +80,7 @@ func (h pathGraphHeap) exists(u, v, i int) (exists bool, pos int) {
 	return false, -1
 }
 
-func (h *pathGraphHeap) replace(oldNode, newNode node) {
+func (h *pathGraphHeap) replace(oldNode, newNode pathGraphNode) {
 	uOld, vOld, iOld := oldNode.EdgeKeys()
 	uNew, vNew, iNew := newNode.EdgeKeys()
 	pos := h.nodes[uOld][vOld][iOld]

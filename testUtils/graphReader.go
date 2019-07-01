@@ -20,10 +20,10 @@ const graphExtension = ".graph"
 
 // TestGraph represents a test graph read from a file. Implements kstar.Graph.
 type TestGraph struct {
-	TestName    string
-	s, t        int
-	fValues     map[int]float64
-	connections map[int]map[int][]float64
+	TestName string
+	s, t     int
+	fValues  map[int]float64
+	graph    map[int]map[int][]float64
 }
 
 // Nodes returns the set of nodes of the graph.
@@ -38,8 +38,8 @@ func (tg TestGraph) Nodes() []int {
 }
 
 // Connections returns the problem connections
-func (tg TestGraph) Connections() map[int]map[int][]float64 {
-	return tg.connections
+func (tg TestGraph) Connections(n int) map[int][]float64 {
+	return tg.graph[n]
 }
 
 // S returns the problem s node
@@ -87,7 +87,7 @@ func generateTest(filePath, testName string) (tg TestGraph) {
 
 	tg.TestName = testName
 	tg.fValues = make(map[int]float64, 0)
-	tg.connections = make(map[int]map[int][]float64, 0)
+	tg.graph = make(map[int]map[int][]float64, 0)
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -100,7 +100,7 @@ func generateTest(filePath, testName string) (tg TestGraph) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			tg.connections = make(map[int]map[int][]float64, 0)
+			tg.graph = make(map[int]map[int][]float64, 0)
 		} else if vals[0] == heuristicMark {
 			nodeInt, err := strconv.Atoi(vals[1])
 			fValue, err := strconv.ParseFloat(vals[2], 64)
@@ -116,14 +116,14 @@ func generateTest(filePath, testName string) (tg TestGraph) {
 				log.Fatal(err)
 			}
 
-			if _, ok := tg.connections[u]; !ok {
-				tg.connections[u] = make(map[int][]float64, 0)
+			if _, ok := tg.graph[u]; !ok {
+				tg.graph[u] = make(map[int][]float64, 0)
 			}
-			if _, ok := tg.connections[u][v]; !ok {
-				tg.connections[u][v] = make([]float64, 0)
+			if _, ok := tg.graph[u][v]; !ok {
+				tg.graph[u][v] = make([]float64, 0)
 			}
 
-			tg.connections[u][v] = append(tg.connections[u][v], c)
+			tg.graph[u][v] = append(tg.graph[u][v], c)
 
 		}
 
@@ -134,7 +134,7 @@ func generateTest(filePath, testName string) (tg TestGraph) {
 }
 
 func fillFValues(tg *TestGraph) {
-	for node := range tg.connections {
+	for node := range tg.graph {
 		if _, ok := tg.fValues[node]; !ok {
 			tg.fValues[node] = 0
 		}

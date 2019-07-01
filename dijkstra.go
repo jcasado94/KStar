@@ -20,14 +20,14 @@ func newDijkstra(rn *rNode) (d *dijkstra) {
 }
 
 type dijkstraNode struct {
-	n       node
+	n       pathGraphNode
 	cost    float64
 	path    []*dijkstraNode
 	isCross bool
 	isR     bool
 }
 
-func newDijkstraNode(n node, cost float64, path []*dijkstraNode, isCross, isR bool) *dijkstraNode {
+func newDijkstraNode(n pathGraphNode, cost float64, path []*dijkstraNode, isCross, isR bool) *dijkstraNode {
 	dn := dijkstraNode{
 		n:       n,
 		cost:    cost,

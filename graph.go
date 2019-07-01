@@ -3,10 +3,10 @@ package kstar
 // Graph defines the graph interface used by K*.
 type Graph interface {
 
-	// Connections is the actual graph representation.
-	// It returns a map matrix with the positive costs of the edges between any i and j (0 <= i, j!), or empty slice if there's no such connection.
+	// Connections is the implicit representation of our graph.
+	// Given a graph node represented by non-negative integer n, it returns costs of the edges from n to any other node.
 	// Edge costs must be strictly positive. Loops allowed. Keep complexity on O(1).
-	Connections() map[int]map[int][]float64
+	Connections(n int) map[int][]float64
 
 	// S returns the departure node.
 	S() int

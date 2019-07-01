@@ -29,17 +29,7 @@ func newAstar(g Graph) *astar {
 	as.searchTreeChildren = make(map[int][]int, 0)
 	arrivingEdges := make(map[int]int, 0)
 
-	connections := g.Connections()
-	for u := range connections {
-		if _, ok := as.open[u]; !ok {
-			initNode(u, &as, arrivingEdges)
-		}
-		for v := range connections[u] {
-			if _, ok := as.open[v]; !ok {
-				initNode(v, &as, arrivingEdges)
-			}
-		}
-	}
+	initNode(g.S(), &as, arrivingEdges)
 
 	heap.Init(&as)
 	heap.Push(&as, g.S())
@@ -70,7 +60,11 @@ func (as *astar) run() (newEdges []*Edge, empty bool) {
 		current := heap.Pop(as).(int)
 		reopening := as.c.expand(current)
 
-		for neighbor, edges := range as.g.Connections()[current] {
+		for neighbor, edges := range as.g.Connections(current) {
+
+			if _, ok := as.open[neighbor]; !ok {
+				initNode(neighbor, as, as.c.arrivingEdges)
+			}
 
 			if len(edges) == 0 {
 				continue
@@ -153,7 +147,7 @@ func (as astar) minPathCost() (cost float64) {
 		if e == nil {
 			break
 		}
-		cost += as.g.Connections()[e.U][node][e.I]
+		cost += as.g.Connections(e.U)[node][e.I]
 		node = e.U
 	}
 
@@ -166,7 +160,7 @@ func (as astar) minPathCost() (cost float64) {
 }
 
 func (as astar) dValue(e *Edge) float64 {
-	cost := as.g.Connections()[e.U][e.V][e.I]
+	cost := as.g.Connections(e.U)[e.V][e.I]
 	return as.gScore[e.U] + cost - as.gScore[e.V]
 }
 
