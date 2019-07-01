@@ -136,7 +136,7 @@ func (as astar) processEdges(current, neighbor int, edges []float64, newEdges *[
 }
 
 func (as astar) fScore(n int) float64 {
-	return as.gScore[n] + as.g.FValues()[n]
+	return as.gScore[n] + as.g.FValue(n)
 }
 
 func (as astar) minPathCost() (cost float64) {

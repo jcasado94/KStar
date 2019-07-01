@@ -112,8 +112,8 @@ func (g mockGraph) T() int {
 	return g.t
 }
 
-func (g mockGraph) FValues() map[int]float64 {
-	return g.fValues
+func (g mockGraph) FValue(n int) float64 {
+	return g.fValues[n]
 }
 
 func newMockGraph(s, t int) mockGraph {
