@@ -2,10 +2,10 @@
     "TestName": "5.1",
     "InEdges": [
         {
-            "U": 2,
+            "U": 3,
             "V": 4,
             "I": 0
         }
     ],
-    "MinPath": 4
+    "MinPath": 5
 }

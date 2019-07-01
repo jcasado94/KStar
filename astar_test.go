@@ -85,9 +85,9 @@ func mapEdges(edges []*Edge) (m map[int]map[int]map[int]bool) {
 }
 
 type mockGraph struct {
-	connections map[int]map[int][]float64
-	s, t        int
-	fValues     map[int]float64
+	graph   map[int]map[int][]float64
+	s, t    int
+	fValues map[int]float64
 }
 
 func (g mockGraph) Nodes() []int {
@@ -100,8 +100,8 @@ func (g mockGraph) Nodes() []int {
 	return nodes
 }
 
-func (g mockGraph) Connections() map[int]map[int][]float64 {
-	return g.connections
+func (g mockGraph) Connections(n int) map[int][]float64 {
+	return g.graph[n]
 }
 
 func (g mockGraph) S() int {
@@ -118,20 +118,20 @@ func (g mockGraph) FValues() map[int]float64 {
 
 func newMockGraph(s, t int) mockGraph {
 	return mockGraph{
-		connections: make(map[int]map[int][]float64, 0),
-		s:           s,
-		t:           t,
-		fValues:     make(map[int]float64, 0),
+		graph:   make(map[int]map[int][]float64, 0),
+		s:       s,
+		t:       t,
+		fValues: make(map[int]float64, 0),
 	}
 }
 
 func TestNewAstar(t *testing.T) {
 	g := newMockGraph(0, 1)
-	g.connections[0] = make(map[int][]float64, 0)
-	g.connections[0][1] = []float64{1}
+	g.graph[0] = make(map[int][]float64, 0)
+	g.graph[0][1] = []float64{1}
 
 	as := newAstar(g)
-	for node := range g.connections {
+	for node := range g.graph {
 		if node != g.S() && as.open[node] != -1 {
 			t.Errorf("%d is open after initialization.", node)
 		} else if as.gScore[node] != 0 {

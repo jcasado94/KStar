@@ -2,31 +2,31 @@ package kstar
 
 const rEdgeKey = -1
 
-type node interface {
-	CrossEdgeChild() node
-	HeapEdgeChildren() []node
+type pathGraphNode interface {
+	CrossEdgeChild() pathGraphNode
+	HeapEdgeChildren() []pathGraphNode
 	D() float64
 	EdgeKeys() (int, int, int)
 }
 
-func getHeapLeftChild(h pathGraphHeap, i, shifted int) node {
+func getHeapLeftChild(h pathGraphHeap, i, shifted int) pathGraphNode {
 
 	iChild := 2*i + 1 - shifted
 	if iChild >= h.Len() {
 		return nil
 	}
 
-	return h.pq[iChild].(node)
+	return h.pq[iChild].(pathGraphNode)
 }
 
-func getHeapRightChild(h pathGraphHeap, i, shifted int) node {
+func getHeapRightChild(h pathGraphHeap, i, shifted int) pathGraphNode {
 
 	iChild := 2*i + 2 - shifted
 	if iChild >= h.Len() {
 		return nil
 	}
 
-	return h.pq[iChild].(node)
+	return h.pq[iChild].(pathGraphNode)
 }
 
 type hinNode struct {
@@ -44,7 +44,7 @@ func (n hinNode) D() float64 {
 	return n.d
 }
 
-func (n hinNode) CrossEdgeChild() node {
+func (n hinNode) CrossEdgeChild() pathGraphNode {
 	ht := (*n.hts)[n.u]
 	if ht == nil {
 		return nil
@@ -53,15 +53,15 @@ func (n hinNode) CrossEdgeChild() node {
 	if htRoot == nil {
 		return nil
 	}
-	return htRoot.(node)
+	return htRoot.(pathGraphNode)
 }
 
-func (n hinNode) HeapEdgeChildren() []node {
+func (n hinNode) HeapEdgeChildren() []pathGraphNode {
 
 	leftChild := n.getLeftChild()
 	rightChild := n.getRightChild()
 
-	children := []node{}
+	children := []pathGraphNode{}
 
 	if leftChild != nil {
 		children = append(children, leftChild)
@@ -74,12 +74,12 @@ func (n hinNode) HeapEdgeChildren() []node {
 	return children
 }
 
-func (n hinNode) getLeftChild() node {
+func (n hinNode) getLeftChild() pathGraphNode {
 
 	pos := n.vHin.nodes[n.u][n.v][n.i]
 	if pos == 0 {
 		if n.vHin.Len() > 1 {
-			return (*n.vHin).pq[1].(node)
+			return (*n.vHin).pq[1].(pathGraphNode)
 		}
 		return nil
 	}
@@ -87,7 +87,7 @@ func (n hinNode) getLeftChild() node {
 	return getHeapLeftChild(*n.vHin, pos, 1)
 }
 
-func (n hinNode) getRightChild() node {
+func (n hinNode) getRightChild() pathGraphNode {
 
 	pos := n.vHin.nodes[n.u][n.v][n.i]
 	if pos == 0 {
@@ -114,11 +114,11 @@ func (n htNode) D() float64 {
 	return n.hinNode.D()
 }
 
-func (n htNode) CrossEdgeChild() node {
+func (n htNode) CrossEdgeChild() pathGraphNode {
 	return n.hinNode.CrossEdgeChild()
 }
 
-func (n htNode) HeapEdgeChildren() []node {
+func (n htNode) HeapEdgeChildren() []pathGraphNode {
 
 	children := n.hinNode.HeapEdgeChildren()
 	leftChild := n.getLeftChild()
@@ -135,12 +135,12 @@ func (n htNode) HeapEdgeChildren() []node {
 	return children
 }
 
-func (n htNode) getLeftChild() node {
+func (n htNode) getLeftChild() pathGraphNode {
 	pos := n.ht.nodes[n.hinNode.u][n.hinNode.v][n.hinNode.i]
 	return getHeapLeftChild(*n.ht, pos, 0)
 }
 
-func (n htNode) getRightChild() node {
+func (n htNode) getRightChild() pathGraphNode {
 	pos := n.ht.nodes[n.hinNode.u][n.hinNode.v][n.hinNode.i]
 	return getHeapRightChild(*n.ht, pos, 0)
 }
@@ -149,12 +149,12 @@ type rNode struct {
 	tHt *pathGraphHeap
 }
 
-func (n rNode) CrossEdgeChild() node {
-	return n.tHt.Top().(node)
+func (n rNode) CrossEdgeChild() pathGraphNode {
+	return n.tHt.Top().(pathGraphNode)
 }
 
-func (n rNode) HeapEdgeChildren() []node {
-	return []node{}
+func (n rNode) HeapEdgeChildren() []pathGraphNode {
+	return []pathGraphNode{}
 }
 
 func (n rNode) D() float64 {

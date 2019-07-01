@@ -51,10 +51,10 @@ type TestPath struct {
 	Cost  float64
 }
 
-func getPathCost(path []*Edge, connections map[int]map[int][]float64) float64 {
+func getPathCost(path []*Edge, g *testutils.TestGraph) float64 {
 	cost := 0.0
 	for _, edge := range path {
-		cost += connections[edge.U][edge.V][edge.I]
+		cost += g.Connections(edge.U)[edge.V][edge.I]
 	}
 	return cost
 }
@@ -72,7 +72,7 @@ func TestAllKstarInstances(t *testing.T) {
 		for _, path := range paths {
 			tPaths = append(tPaths, TestPath{
 				Edges: path,
-				Cost:  getPathCost(path, tg.tg.Connections()),
+				Cost:  getPathCost(path, &tg.tg),
 			})
 		}
 		to := new(TestOutputKstar)
