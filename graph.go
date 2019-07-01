@@ -14,8 +14,8 @@ type Graph interface {
 	//T returns the arrival node.
 	T() int
 
-	// FValues returns the heuristic cost from node i to T(), for any i.
-	FValues() map[int]float64
+	// FValue returns the heuristic cost from node n to T().
+	FValue(n int) float64
 }
 
 // Edge represents an Edge defined in Graph.Connections(), specifically the ith from u to v.

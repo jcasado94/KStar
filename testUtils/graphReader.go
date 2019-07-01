@@ -52,9 +52,9 @@ func (tg TestGraph) T() int {
 	return tg.t
 }
 
-// FValues returns the problem nodes heuristic values
-func (tg TestGraph) FValues() map[int]float64 {
-	return tg.fValues
+// FValue returns the heuristic cost from node n to t.
+func (tg TestGraph) FValue(n int) float64 {
+	return tg.fValues[n]
 }
 
 // GenerateTests generates all the TestGraph instances from all the files at the specified path.
