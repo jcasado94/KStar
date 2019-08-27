@@ -150,6 +150,10 @@ type rNode struct {
 }
 
 func (n rNode) CrossEdgeChild() pathGraphNode {
+	top := n.tHt.Top()
+	if top == nil {
+		return nil
+	}
 	return n.tHt.Top().(pathGraphNode)
 }
 
