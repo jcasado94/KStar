@@ -22,3 +22,22 @@ type Graph interface {
 type Edge struct {
 	U, V, I int
 }
+
+// RemoveLoopPaths removes the paths which contain loops.
+func RemoveLoopPaths(paths [][]*Edge) (modifiedPaths [][]*Edge) {
+	for _, path := range paths {
+		admittable := true
+		beenTo := map[int]bool{path[0].U: true}
+		for _, edge := range path {
+			if beenTo[edge.V] {
+				admittable = false
+				break
+			}
+			beenTo[edge.V] = true
+		}
+		if admittable {
+			modifiedPaths = append(modifiedPaths, path)
+		}
+	}
+	return modifiedPaths
+}

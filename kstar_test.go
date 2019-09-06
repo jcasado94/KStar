@@ -134,3 +134,7 @@ func printPath(path []*Edge) (p string) {
 func (e1 *Edge) equals(e2 *Edge) bool {
 	return e1.U == e2.U && e1.V == e2.V && e1.I == e2.I
 }
+
+func (e *Edge) String() string {
+	return fmt.Sprintf("{U:%d, V:%d, I:%d}", e.U, e.V, e.I)
+}
