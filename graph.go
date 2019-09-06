@@ -22,7 +22,3 @@ type Graph interface {
 type Edge struct {
 	U, V, I int
 }
-
-func (e1 *Edge) equals(e2 *Edge) bool {
-	return e1.U == e2.U && e1.V == e2.V && e1.I == e2.I
-}
