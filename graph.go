@@ -24,7 +24,7 @@ type Edge struct {
 }
 
 // RemoveLoopPaths removes the paths which contain loops.
-func RemoveLoopPaths(paths [][]*Edge) (modifiedPaths [][]*Edge) {
+func RemoveLoopPaths(paths [][]Edge) (modifiedPaths [][]Edge) {
 	for _, path := range paths {
 		admittable := true
 		beenTo := map[int]bool{path[0].U: true}
