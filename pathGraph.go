@@ -18,7 +18,7 @@ func newPathGraph() *pathGraph {
 	return &pg
 }
 
-func (pg *pathGraph) updateHinNodes(edges []*Edge, as *astar) {
+func (pg *pathGraph) updateHinNodes(edges []Edge, as *astar) {
 	for _, e := range edges {
 		if _, ok := pg.hin[e.V]; !ok {
 			pg.hin[e.V] = newPathGraphHeap()

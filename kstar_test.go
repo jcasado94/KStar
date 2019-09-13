@@ -47,11 +47,11 @@ func (to *TestOutputKstar) TestFolderPath() string {
 }
 
 type TestPath struct {
-	Edges []*Edge
+	Edges []Edge
 	Cost  float64
 }
 
-func getPathCost(path []*Edge, g *testutils.TestGraph) float64 {
+func getPathCost(path []Edge, g *testutils.TestGraph) float64 {
 	cost := 0.0
 	for _, edge := range path {
 		cost += g.Connections(edge.U)[edge.V][edge.I]
@@ -84,7 +84,7 @@ func TestAllKstarInstances(t *testing.T) {
 				path := paths[i]
 				for j, expectedEdge := range expectedPath.Edges {
 					edge := path[j]
-					if !expectedEdge.equals(edge) {
+					if !expectedEdge.equals(&edge) {
 						t.Errorf("Test %s failed! Path %d was\n%s\n, but expected\n%s", tg.tg.TestName, i, printPath(path), printPath(expectedPath.Edges))
 					}
 				}
@@ -124,9 +124,9 @@ func generateTests() (kstgs []kstarTest) {
 	return kstgs
 }
 
-func printPath(path []*Edge) (p string) {
+func printPath(path []Edge) (p string) {
 	for _, edge := range path {
-		p += fmt.Sprintf(" %v", *edge)
+		p += fmt.Sprintf(" %v", edge)
 	}
 	return p
 }

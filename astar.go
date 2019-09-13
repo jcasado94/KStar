@@ -11,7 +11,7 @@ type astar struct {
 	pq                 []int
 	open               map[int]int // pq position, -1 if closed
 	gScore             map[int]float64
-	searchTreeParents  map[int]*Edge
+	searchTreeParents  map[int]Edge
 	searchTreeChildren map[int]map[int]interface{}
 
 	c expansionConditionChecker
@@ -25,7 +25,7 @@ func newAstar(g Graph) *astar {
 	as.g = g
 	as.open = make(map[int]int, 0)
 	as.gScore = make(map[int]float64, 0)
-	as.searchTreeParents = make(map[int]*Edge, 0)
+	as.searchTreeParents = make(map[int]Edge, 0)
 	as.searchTreeChildren = make(map[int]map[int]interface{}, 0)
 	arrivingEdges := make(map[int]int, 0)
 
@@ -42,14 +42,14 @@ func newAstar(g Graph) *astar {
 func initNode(n int, as *astar, arrivingEdges map[int]int) {
 	as.open[n] = -1
 	as.gScore[n] = 0
-	as.searchTreeParents[n] = nil
+	as.searchTreeParents[n] = Edge{}
 	as.searchTreeChildren[n] = make(map[int]interface{}, 0)
 	arrivingEdges[n] = 0
 }
 
-func (as *astar) run() (newEdges []*Edge, empty bool) {
+func (as *astar) run() (newEdges []Edge, empty bool) {
 
-	newEdges = make([]*Edge, 0)
+	newEdges = make([]Edge, 0)
 
 	for !as.Empty() {
 
@@ -75,7 +75,7 @@ func (as *astar) run() (newEdges []*Edge, empty bool) {
 
 			tentativeScore := as.gScore[current] + minCost
 			isOpen := as.open[neighbor] != -1
-			hasParent := as.searchTreeParents[neighbor] != nil
+			hasParent := as.searchTreeParents[neighbor] != Edge{}
 
 			e := Edge{current, neighbor, minEdge}
 			if hasParent {
@@ -83,7 +83,8 @@ func (as *astar) run() (newEdges []*Edge, empty bool) {
 					newEdges = appendIf(newEdges, &e, !reopening)
 					continue
 				}
-				newEdges = appendIf(newEdges, as.searchTreeParents[neighbor], !reopening)
+				parent := as.searchTreeParents[neighbor]
+				newEdges = appendIf(newEdges, &parent, !reopening)
 			}
 
 			if neighbor == as.g.S() {
@@ -93,7 +94,7 @@ func (as *astar) run() (newEdges []*Edge, empty bool) {
 					oldParent := as.searchTreeParents[neighbor].U
 					delete(as.searchTreeChildren[oldParent], neighbor)
 				}
-				as.searchTreeParents[neighbor] = &e
+				as.searchTreeParents[neighbor] = e
 				as.searchTreeChildren[current][neighbor] = true
 			}
 
@@ -115,14 +116,14 @@ func (as *astar) run() (newEdges []*Edge, empty bool) {
 
 }
 
-func appendIf(newEdges []*Edge, e *Edge, should bool) []*Edge {
+func appendIf(newEdges []Edge, e *Edge, should bool) []Edge {
 	if should {
-		return append(newEdges, e)
+		return append(newEdges, *e)
 	}
 	return newEdges
 }
 
-func (as astar) processEdges(current, neighbor int, edges []float64, newEdges *[]*Edge, reopening bool) (minEdge int, minCost float64) {
+func (as astar) processEdges(current, neighbor int, edges []float64, newEdges *[]Edge, reopening bool) (minEdge int, minCost float64) {
 
 	minCost, minEdge = edges[0], 0
 	e := 1
@@ -148,7 +149,7 @@ func (as astar) minPathCost() (cost float64) {
 	node := as.g.T()
 	for node != as.g.S() {
 		e := as.searchTreeParents[node]
-		if e == nil {
+		if e == (Edge{}) {
 			break
 		}
 		cost += as.g.Connections(e.U)[node][e.I]
@@ -163,7 +164,7 @@ func (as astar) minPathCost() (cost float64) {
 
 }
 
-func (as astar) dValue(e *Edge) float64 {
+func (as astar) dValue(e Edge) float64 {
 	cost := as.g.Connections(e.U)[e.V][e.I]
 	return as.gScore[e.U] + cost - as.gScore[e.V]
 }

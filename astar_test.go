@@ -16,7 +16,7 @@ const (
 // TestOutputAstar represents an astar test output file structure
 type TestOutputAstar struct {
 	TestName string
-	InEdges  []*Edge
+	InEdges  []Edge
 	MinPath  float64
 }
 
@@ -34,7 +34,7 @@ func (to *TestOutputAstar) Unmarshal(bytes []byte) error {
 
 func (to *TestOutputAstar) New(args ...interface{}) {
 	to.TestName = args[0].(string)
-	to.InEdges = args[1].([]*Edge)
+	to.InEdges = args[1].([]Edge)
 	to.MinPath = args[2].(float64)
 }
 
@@ -69,7 +69,7 @@ func TestAllAstarInstances(t *testing.T) {
 	}
 }
 
-func mapEdges(edges []*Edge) (m map[int]map[int]map[int]bool) {
+func mapEdges(edges []Edge) (m map[int]map[int]map[int]bool) {
 	m = make(map[int]map[int]map[int]bool)
 	for _, edge := range edges {
 		u, v, i := edge.U, edge.V, edge.I
@@ -136,7 +136,7 @@ func TestNewAstar(t *testing.T) {
 			t.Errorf("%d is open after initialization.", node)
 		} else if as.gScore[node] != 0 {
 			t.Errorf("%d has non-zero gScore after initialization.", node)
-		} else if as.searchTreeParents[node] != nil {
+		} else if as.searchTreeParents[node] != (Edge{}) {
 			t.Errorf("%d has a parent after initialization.", node)
 		} else if as.c.arrivingEdges[node] != 0 {
 			t.Errorf("%d has arriving edges marked after initialization.", node)
@@ -153,7 +153,7 @@ func TestNewAstar(t *testing.T) {
 func TestProcessEdges(t *testing.T) {
 	current, neighbor := 0, 1
 	edges := []float64{0.2, 0.1, 0.3}
-	newEdges := make([]*Edge, 0)
+	newEdges := make([]Edge, 0)
 	g := newMockGraph(0, 1)
 	as := newAstar(g)
 
